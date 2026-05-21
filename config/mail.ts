@@ -19,13 +19,13 @@ export const sendOrderNotification = async (order: any) => {
   
   // 1. Email cho Chủ quán (Admin)
   const adminMailOptions = {
-    from: `"FOX SPORTS System" <${process.env.EMAIL_USER}>`,
+    from: `"ĐỖ LÊ SPORT System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
     subject: `🔔 ĐƠN HÀNG MỚI: #${order.orderNumber}`,
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden;">
         <div style="background-color: #FF5F00; padding: 30px 20px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px; letter-spacing: 2px;">FOX SPORTS</h1>
+          <h1 style="color: white; margin: 0; font-size: 28px; letter-spacing: 2px;">ĐỖ LÊ SPORT</h1>
           <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0 0; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Thông báo hệ thống</p>
         </div>
         
@@ -52,7 +52,7 @@ export const sendOrderNotification = async (order: any) => {
         </div>
         
         <div style="background-color: #f1f1f1; padding: 20px; font-size: 12px; color: #666; text-align: center;">
-          <p>© 2026 FOX SPORTS. All rights reserved.</p>
+          <p>© 2026 ĐỖ LÊ SPORT. All rights reserved.</p>
         </div>
       </div>
     `,
@@ -60,13 +60,13 @@ export const sendOrderNotification = async (order: any) => {
 
   // 2. Email xác nhận cho Khách hàng
   const customerMailOptions = {
-    from: `"FOX SPORTS" <${process.env.EMAIL_USER}>`,
+    from: `"ĐỖ LÊ SPORT" <${process.env.EMAIL_USER}>`,
     to: order.customer.email || order.customer.email, // Nếu có email khách
-    subject: `Cảm ơn bạn đã đặt hàng tại FOX SPORTS (#${order.orderNumber})`,
+    subject: `Cảm ơn bạn đã đặt hàng tại ĐỖ LÊ SPORT (#${order.orderNumber})`,
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden;">
         <div style="background-color: #1a1a1a; padding: 30px 20px; text-align: center;">
-          <h1 style="color: #FF5F00; margin: 0; font-size: 28px; letter-spacing: 2px;">FOX SPORTS</h1>
+          <h1 style="color: #FF5F00; margin: 0; font-size: 28px; letter-spacing: 2px;">ĐỖ LÊ SPORT</h1>
         </div>
         
         <div style="padding: 30px;">

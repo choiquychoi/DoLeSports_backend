@@ -196,7 +196,7 @@ app.post("/api/admin/login", async (req: Request, res: Response) => {
   try {
     const admin = await Admin.findOne({ username });
     if (!admin || !(await admin.comparePassword(password))) return res.status(401).json({ message: "Sai thông tin." });
-    const secret = process.env.JWT_SECRET || "tam_hi_sports_secret_2026_secure";
+    const secret = process.env.JWT_SECRET || "dole_sport_secret_2026_secure";
     const token = jwt.sign({ id: admin._id }, secret, { expiresIn: "1d" });
     res.json({ _id: admin._id, username: admin.username, token });
   } catch (error: any) { res.status(500).json({ message: error.message }); }
@@ -207,20 +207,21 @@ app.get("/api/contact", async (req: Request, res: Response) => {
     let contact = await Contact.findOne();
     if (!contact) {
       contact = await Contact.create({ 
-        companyName: "FOX SPORTS",
+        companyName: "ĐỖ LÊ SPORT",
         address: "168 Tô Vĩnh Diện, P. Đông Hoà, TP. HCM",
         phone: "0363528196",
-        email: "foxsportshcm@gmail.com",
+        email: "dolesporthcm@gmail.com",
         socialLinks: {
           facebook: "https://www.facebook.com/profile.php?id=61586397269289",
           zalo: "0363528196"
         }
       });
-    } else if (contact.companyName.includes("TÂM HÍ")) {
-      contact.companyName = "FOX SPORTS";
+    } else if (contact.companyName.includes("TÂM HÍ") || contact.companyName.includes("FOX SPORTS")) {
+      contact.companyName = "ĐỖ LÊ SPORT";
       contact.address = "168 Tô Vĩnh Diện, P. Đông Hoà, TP. HCM";
       contact.phone = "0363528196";
-      contact.email = "foxsportshcm@gmail.com";
+      contact.email = "dolesporthcm@gmail.com";
+      if (!contact.socialLinks) contact.socialLinks = {};
       contact.socialLinks.facebook = "https://www.facebook.com/profile.php?id=61586397269289";
       contact.socialLinks.zalo = "0363528196";
       await contact.save();
