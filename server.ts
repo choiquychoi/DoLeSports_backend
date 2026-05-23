@@ -10,8 +10,10 @@ import Contact from "./models/Contact.js";
 import newsRoutes from "./routes/newsRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import bannerRoutes from "./routes/bannerRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 import Order from "./models/Order.js";
 import News from "./models/News.js";
+import CourtConfig from "./models/CourtConfig.js";
 import { protect } from "./middleware/authMiddleware.js";
 import { generatePresignedUrl, uploadToS3 } from "./config/s3.js";
 import multer from "multer";
@@ -189,6 +191,7 @@ app.delete("/api/admin/products/:id", protect, async (req: Request, res: Respons
 app.use("/api/admin", newsRoutes);
 app.use("/api", newsRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/bookings", bookingRoutes);
 app.use("/api/banners", bannerRoutes);
 
 app.post("/api/admin/login", async (req: Request, res: Response) => {
@@ -233,6 +236,37 @@ app.get("/api/contact", async (req: Request, res: Response) => {
 app.put("/api/admin/contact", protect, async (req: Request, res: Response) => {
   try { res.json(await Contact.findOneAndUpdate({}, req.body, { upsert: true, returnDocument: "after" })); }
   catch (error: any) { res.status(500).json({ message: error.message }); }
+});
+
+app.get("/api/court-config", async (req: Request, res: Response) => {
+  try {
+    let config = await CourtConfig.findOne();
+    if (!config) {
+      config = await CourtConfig.create({
+        courtCount: 3,
+        pricing: {
+          weekday: { 
+            morning: { fixed: 120000, casual: 140000 }, 
+            evening: { fixed: 160000, casual: 180000 } 
+          },
+          weekend: { 
+            morning: { fixed: 140000, casual: 160000 }, 
+            evening: { fixed: 180000, casual: 200000 } 
+          }
+        },
+        operatingHours: { start: "05:00", end: "23:00" },
+        slotInterval: 30
+      });
+    }
+    res.json(config);
+  } catch (error: any) { res.status(500).json({ message: error.message }); }
+});
+
+app.put("/api/admin/court-config", protect, async (req: Request, res: Response) => {
+  try {
+    const config = await CourtConfig.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    res.json(config);
+  } catch (error: any) { res.status(500).json({ message: error.message }); }
 });
 
 const PORT = process.env.PORT || 5005;
