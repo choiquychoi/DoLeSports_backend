@@ -1,33 +1,38 @@
-# GIAI ĐOẠN 1: BUILDER
-FROM node:20-alpine AS builder
+# STAGE 1: BUILDER
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy file package để cài đặt dependencies
+# Chỉ copy file package trước để tận dụng cache của Docker layer
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Copy toàn bộ code nguồn và build sang JS
+# Copy toàn bộ mã nguồn (trừ những gì đã nêu trong .dockerignore)
 COPY . .
+
+# Biên dịch TypeScript sang JavaScript
 RUN npm run build
 
-# GIAI ĐOẠN 2: RUNNER
-FROM node:20-alpine AS runner
+# STAGE 2: RUNNER
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-# Chỉ copy những file cần thiết để chạy
+# Thiết lập môi trường Production
 ENV NODE_ENV=production
 ENV PORT=5005
 
-# Cài đặt duy nhất các thư viện cần cho Production (bỏ qua dev-deps)
+# Chỉ cài đặt dependencies cần thiết cho runtime (omit devDependencies)
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
-# Copy thư mục dist đã được build từ tầng builder sang
+# Copy kết quả build từ stage builder
 COPY --from=builder /app/dist ./dist
+
+# Sử dụng user 'node' có sẵn trong image để tăng tính bảo mật (không chạy bằng root)
+USER node
 
 EXPOSE 5005
 
-# Chạy trực tiếp bằng Node cho hiệu năng cao nhất
+# Chạy ứng dụng từ file đã build
 CMD ["node", "dist/server.js"]
